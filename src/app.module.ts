@@ -8,19 +8,25 @@ import { ExerciseModule } from './exercise/exercise.module';
 import { ProgramModule } from './program/program.module';
 import { WorkoutResultModule } from './workout-result/workout-result.module';
 import { WorkoutExerciseModule } from './workout-exercise/workout-exercise.module';
+import { Food } from './food/food.entity';
+import { User } from './user/user.entity';
+import { Exercise } from './exercise/exercise.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'woreps',
-      autoLoadEntities: true,
-      synchronize: true
+      host: 'localhost', 
+      port: 5432, 
+      username: 'postgres', 
+      password: 'postgres', 
+      database: 'woreps', 
+      autoLoadEntities: true, 
+      synchronize: true,
     }),
+    TypeOrmModule.forFeature([
+      Food, User, Exercise
+    ]),
     UserModule,
     FoodModule,
     ExerciseModule,
