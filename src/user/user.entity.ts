@@ -6,14 +6,26 @@ export class User {
   id: number;
 
   @Column()
-  food_name: string;
+  name: string;
 
   @Column()
-  food_category: string;
+  email: string;
 
   @Column()
-  food_image: string;
+  password: string;
 
   @Column()
-  food_description: string;
+  tinggi_badan: number;
+
+  @Column()
+  berat_badan: number;
+
+  @Column()
+  usia: number;
+
+  @Column()
+  jenis_kelamin: string;
+
+  @Column()
+  tujuan_workout: string;
 }
