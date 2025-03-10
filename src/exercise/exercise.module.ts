@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Exercise } from './exercise.entity';
 import { ExerciseService } from './exercise.service';
 import { ExerciseController } from './exercise.controller';
+import { Program } from 'src/program/program.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exercise])],
+  imports: [TypeOrmModule.forFeature([Exercise, Program])],
   providers: [ExerciseService],
   controllers: [ExerciseController],
 })

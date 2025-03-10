@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class CreateExerciseDTO {
   @IsNotEmpty()
@@ -13,6 +13,15 @@ export class CreateExerciseDTO {
   @IsNotEmpty()
   exercise_category: string;
 
+  @IsOptional() 
+  @IsNumber()
+  repetisi?: number;
+
+  @IsOptional()
+  @IsNumber()
+  duration?: number;
+
   @IsNotEmpty()
-  exercise_muscle_category: string;
+  @IsInt()
+  program_id: number;
 }

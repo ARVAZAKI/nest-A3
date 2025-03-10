@@ -1,13 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ExerciseService } from './exercise.service';
 import { CreateExerciseDTO } from './dto/create-exercise.dto';
-import { UpdateExerciseDTO } from './dto/update-exercise.dto';
 
 @Controller('exercises')
 export class ExerciseController {
   constructor(private readonly exerciseService: ExerciseService) {}
 
-  @Post()
+  @Post('/')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createExerciseDto: CreateExerciseDTO) {
     const exercise = await this.exerciseService.create(createExerciseDto);
@@ -17,7 +16,7 @@ export class ExerciseController {
     };
   }
 
-  @Get()
+  @Get('/')
   async findAll() {
     const exercises = await this.exerciseService.findAll();
     return {
@@ -32,15 +31,6 @@ export class ExerciseController {
     return {
       message: 'Exercise retrieved successfully',
       data: exercise,
-    };
-  }
-
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateExerciseDto: UpdateExerciseDTO) {
-    const updatedExercise = await this.exerciseService.update(+id, updateExerciseDto);
-    return {
-      message: 'Exercise updated successfully',
-      data: updatedExercise,
     };
   }
 
