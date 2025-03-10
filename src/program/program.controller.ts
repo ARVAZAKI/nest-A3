@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { ProgramService } from './program.service';
 import { CreateProgramDTO } from './dto/create-program.dto';
 
-@Controller('program')
+@Controller('/api/programs')
 export class ProgramController {
       constructor(private service: ProgramService) {}
 

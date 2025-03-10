@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { ExerciseService } from './exercise.service';
 import { CreateExerciseDTO } from './dto/create-exercise.dto';
 
-@Controller('exercises')
+@Controller('/api/exercises')
 export class ExerciseController {
   constructor(private readonly exerciseService: ExerciseService) {}
 
