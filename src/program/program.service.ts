@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager'; // Perbaikan import
 import { Program } from './program.entity';
 import { CreateProgramDTO } from './dto/create-program.dto';
 
@@ -9,18 +11,33 @@ export class ProgramService {
   constructor(
     @InjectRepository(Program)
     private readonly programRepository: Repository<Program>,
+    @Inject(CACHE_MANAGER) // Gunakan CACHE_MANAGER yang benar
+    private readonly cacheManager: Cache,
   ) {}
 
-  // ✅ Get all programs
+  // ✅ Get all programs with Redis caching
   async getAllPrograms(): Promise<Program[]> {
-    return this.programRepository.find({ relations: ['exercises'] });
+    const cacheKey = 'allPrograms';
+    // Periksa apakah data sudah ada di cache
+    const cachedPrograms = await this.cacheManager.get<Program[]>(cacheKey);
+    if (cachedPrograms) {
+      return cachedPrograms;
+    }
+
+    // Jika belum ada di cache, ambil data dari database
+    const programs = await this.programRepository.find({ relations: ['exercises'] });
+
+    // Simpan data ke cache dengan TTL 60 detik
+    await this.cacheManager.set(cacheKey, programs, 60 * 1000);
+
+    return programs;
   }
 
   // ✅ Get program by ID with related exercises and error handling
   async getProgramById(id: number): Promise<Program> {
     const program = await this.programRepository.findOne({
       where: { id },
-      relations: ['exercises'], // Mengambil data exercise yang terkait
+      relations: ['exercises'],
     });
 
     if (!program) {

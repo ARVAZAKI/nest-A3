@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { History } from 'src/history/history.entity';
 
 @Entity()
 export class User {
@@ -28,4 +29,7 @@ export class User {
 
   @Column()
   tujuan_workout: string;
+
+  @OneToMany(() => History, (history) => history.user)
+  history: History[];
 }

@@ -6,16 +6,22 @@ import { UserController } from './user.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(), // Memuat variabel environment dari file .env
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: 'JWT_SECRET_KEY', // Ganti dengan secret key yang lebih aman, bisa disimpan di .env
-      signOptions: {
-        expiresIn: '1d', // Token berlaku 1 hari, sesuaikan kebutuhan
-      },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET_KEY'),
+        signOptions: {
+          expiresIn: '1d',
+        },
+      }),
     }),
   ],
   controllers: [UserController],
@@ -23,4 +29,3 @@ import { JwtStrategy } from './jwt.strategy';
   exports: [UserService],
 })
 export class UserModule {}
-  

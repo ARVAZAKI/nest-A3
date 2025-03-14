@@ -7,6 +7,7 @@ import { FoodModule } from './food/food.module';
 import { ExerciseModule } from './exercise/exercise.module';
 import { ProgramModule } from './program/program.module';
 import { WorkoutResultModule } from './workout-result/workout-result.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WorkoutResultModule } from './workout-result/workout-result.module';
     ExerciseModule,
     ProgramModule,
     WorkoutResultModule,
+    HistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
