@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Res, HttpStatus, BadRequestException, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 
@@ -13,34 +13,17 @@ export class UserController {
 
   // REGISTER
   @Post('register')
-  async register(
-    @Body('name') name: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
-    @Body('tinggi_badan') tinggi_badan: number,
-    @Body('berat_badan') berat_badan: number,
-    @Body('usia') usia: number,
-    @Body('jenis_kelamin') jenis_kelamin: string,
-    @Body('tujuan_workout') tujuan_workout: string,
-    @Res() res: Response,
-  ) {
+  async register(@Res() res: Response) {
     try {
-      const user = await this.userService.register(
-        name,
-        email,
-        password,
-        tinggi_badan,
-        berat_badan,
-        usia,
-        jenis_kelamin,
-        tujuan_workout,
-      );
+      const user = await this.userService.register();
       return res.status(HttpStatus.CREATED).json({
         message: 'Registrasi berhasil',
         data: user,
       });
     } catch (error) {
-      throw new BadRequestException(error.message);
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: error.message,
+      });
     }
   }
 
@@ -77,9 +60,6 @@ export class UserController {
   // LOGOUT
   @Post('logout')
   async logout(@Res() res: Response) {
-    // Jika menggunakan JWT stateless, logout biasanya hanya menghapus token di sisi klien
-    // atau menambahkannya ke daftar blacklist di sisi server (opsional).
-    // Di sini kita cukup kirim pesan sukses.
     return res.status(HttpStatus.OK).json({
       message: 'Logout berhasil. Hapus token di sisi klien.',
     });
@@ -94,9 +74,9 @@ export class UserController {
     @Res() res: Response,
   ) {
     try {
-      // Data user dari token akan tersedia pada req.user (sesuai payload yang kita set di login)
-      const user = req.user as any; // pastikan payload token mengandung properti 'sub' (user id)
-      const userId = user.sub;
+      // Data user dari token tersedia pada req.user (hasil dari validate di JwtStrategy)
+      const user = req.user;
+      const userId = user.id || user.sub;
       if (!userId) {
         throw new BadRequestException('Token tidak valid.');
       }

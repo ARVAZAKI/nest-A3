@@ -3,46 +3,45 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { faker } from '@faker-js/faker';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
+
   ) {}
 
   // REGISTER
-  async register(
-    name: string,
-    email: string,
-    password: string,
-    tinggi_badan: number,
-    berat_badan: number,
-    usia: number,
-    jenis_kelamin: string,
-    tujuan_workout: string,
-  ): Promise<User> {
-    // Cek apakah email sudah terdaftar
+  async register(): Promise<{ user: User; token: string }> {
+    const userCount = await this.userRepository.count();
+    const name = `woreps ${userCount + 1}`;
+    const email = `woreps${userCount + 1}@gmail.com`;
+    const password = faker.internet.password();
+
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('Email sudah terdaftar.');
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = this.userRepository.create({
       name,
       email,
       password: hashedPassword,
-      tinggi_badan,
-      berat_badan,
-      usia,
-      jenis_kelamin,
-      tujuan_workout,
     });
 
-    return this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+    const token = this.jwtService.sign(
+      { id: savedUser.id, email: savedUser.email },
+      { expiresIn: '30d' } // Token berlaku selama 30 hari
+    );
+
+    return { user: savedUser, token };
   }
 
   // VALIDASI USER UNTUK LOGIN
@@ -52,7 +51,6 @@ export class UserService {
       return null;
     }
 
-    // Bandingkan password dengan hash di database
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return null;
@@ -64,19 +62,19 @@ export class UserService {
   // TEMUKAN USER BERDASARKAN ID
   async findOneById(id: number): Promise<User> {
     try {
-        const user = await this.userRepository.findOne({ where: { id: id } });
-        if(!user) {
-            throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
-        }
-        return user;
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
+      }
+      return user;
     } catch (error) {
-        if (error instanceof HttpException) {
-            throw error;
+      if (error instanceof HttpException) {
+        throw error;
       }
       throw new HttpException({
-            message: 'Failed to get user',
-            error: error.error
-      }, HttpStatus.INTERNAL_SERVER_ERROR)
+        message: 'Failed to get user',
+        error: error.error,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

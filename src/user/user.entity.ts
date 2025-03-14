@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { History } from 'src/history/history.entity';
 
 @Entity()
 export class User {
@@ -14,18 +15,21 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({nullable: true})
   tinggi_badan: number;
 
-  @Column()
+  @Column({nullable: true})
   berat_badan: number;
 
-  @Column()
+  @Column({nullable: true})
   usia: number;
 
-  @Column()
+  @Column({nullable: true})
   jenis_kelamin: string;
 
-  @Column()
+  @Column({nullable: true})
   tujuan_workout: string;
+
+  @OneToMany(() => History, (history) => history.user)
+  history: History[];
 }

@@ -1,4 +1,5 @@
 import { Exercise } from 'src/exercise/exercise.entity';
+import { History } from 'src/history/history.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
@@ -20,4 +21,7 @@ export class Program {
 
   @OneToMany(() => Exercise, (exercise) => exercise.program)
   exercises: Exercise[];
+
+  @OneToMany(() => History, (history) => history.program)
+  history: History[];
 }
