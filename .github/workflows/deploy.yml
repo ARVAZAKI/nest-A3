@@ -16,12 +16,25 @@ jobs:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: 206.189.89.103
-          username: server-a3
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e  # Hentikan eksekusi jika ada error
+            echo "Deploying to VPS..."
+
             cd /var/www/nest-A3
+
+            echo "Pulling latest changes..."
             git pull origin main
-            npm install
+
+            echo "Installing dependencies..."
+            npm ci
+
+            echo "Building application..."
             npm run build
-            pm2 restart nestjs-app
+
+            echo "Restarting application with PM2..."
+            pm2 restart nestjs-app || pm2 start dist/main.js --name nestjs-app
+
+            echo "Deployment complete!"
