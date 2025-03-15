@@ -21,26 +21,24 @@ export class UserService {
     const name = `woreps ${userCount + 1}`;
     const email = `woreps${userCount + 1}@gmail.com`;
     const password = faker.internet.password();
-
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('Email sudah terdaftar.');
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = this.userRepository.create({
       name,
       email,
       password: hashedPassword,
     });
-
     const savedUser = await this.userRepository.save(newUser);
+    
+    // Perbaikan: Menggunakan 'sub' untuk menyimpan ID user sesuai dengan standar JWT
+    // dan memastikan payload konsisten dengan yang diharapkan oleh JwtStrategy
     const token = this.jwtService.sign(
-      { id: savedUser.id, email: savedUser.email },
+      { sub: savedUser.id, email: savedUser.email },
       { expiresIn: '30d' } // Token berlaku selama 30 hari
     );
-
     return { user: savedUser, token };
   }
 

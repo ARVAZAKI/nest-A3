@@ -28,7 +28,7 @@ export class ProgramService {
     const programs = await this.programRepository.find({ relations: ['exercises'] });
 
     // Simpan data ke cache dengan TTL 60 detik
-    await this.cacheManager.set(cacheKey, programs, 60 * 1000);
+    await this.cacheManager.set(cacheKey, programs, 86400);
 
     return programs;
   }
