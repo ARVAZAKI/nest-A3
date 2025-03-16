@@ -44,11 +44,7 @@ export class HistoryService {
           where: { user: { id: user_id } },
           relations: ['user', 'program', 'program.exercises'],
         });
-        
-        if (!history || history.length === 0) {
-          throw new NotFoundException(`User with ID ${user_id} not found`);
-        }
-      
+    
         const jumlah_program = history.length;
         const total_kalori = history.reduce((acc, curr) => acc + curr.program.calorie, 0);
         let total_exercise_duration = 0;
