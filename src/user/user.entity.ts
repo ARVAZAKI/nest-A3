@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { History } from 'src/history/history.entity';
+import { Goals } from 'src/goals/goals.entity';
 
 @Entity()
 export class User {
@@ -32,4 +33,7 @@ export class User {
 
   @OneToMany(() => History, (history) => history.user)
   history: History[];
+
+  @OneToMany(() => Goals, (goals) => goals.user)
+  goals: Goals[];
 }

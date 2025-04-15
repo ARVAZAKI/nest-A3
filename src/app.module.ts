@@ -8,23 +8,27 @@ import { FoodModule } from './food/food.module';
 import { ExerciseModule } from './exercise/exercise.module';
 import { ProgramModule } from './program/program.module';
 import { HistoryModule } from './history/history.module';
+import { GoalsModule } from './goals/goals.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(), 
+    ConfigModule.forRoot({
+      isGlobal: true, // Membuat ConfigModule tersedia secara global
+      envFilePath: '.env', // Menentukan lokasi file .env
+    }),
 
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule], 
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true, 
+        host: configService.get<string>('DB_HOST'), // Baca dari environment variable
+        port: configService.get<number>('DB_PORT'), // Baca dari environment variable
+        username: configService.get<string>('DB_USERNAME'), // Baca dari environment variable
+        password: configService.get<string>('DB_PASSWORD'), // Baca dari environment variable
+        database: configService.get<string>('DB_DATABASE'), // Baca dari environment variable
+        autoLoadEntities: true, // Memuat entitas secara otomatis
+        synchronize: true, // Hanya untuk development
       }),
     }),
 
@@ -33,6 +37,7 @@ import { HistoryModule } from './history/history.module';
     ExerciseModule,
     ProgramModule,
     HistoryModule,
+    GoalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
