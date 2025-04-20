@@ -1,5 +1,5 @@
-import { Exercise } from 'src/exercise/exercise.entity';
-import { History } from 'src/history/history.entity';
+import { Exercise } from '../exercise/exercise.entity';
+import { History } from '../history/history.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()

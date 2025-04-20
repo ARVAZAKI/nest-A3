@@ -1,6 +1,6 @@
-import { Program } from "src/program/program.entity";
-import { User } from "src/user/user.entity";
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Program } from "../program/program.entity";
+import { User } from "../user/user.entity";
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
 export class History {
@@ -14,4 +14,10 @@ export class History {
     @ManyToOne(() => Program, (program) => program.history, {onDelete: 'CASCADE'})
     @JoinColumn({name: 'program_id'})
     program: Program;
+
+    @Column({nullable: true})
+    total_duration: number;
+
+    @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+    date: Date;
 }

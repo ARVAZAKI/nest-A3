@@ -39,4 +39,13 @@ export class ExerciseController {
   async remove(@Param('id') id: string) {
     await this.exerciseService.remove(+id);
   }
+
+  @Post('/generate-all-embeddings')
+  @HttpCode(HttpStatus.OK)
+  async generateAllEmbeddings() {
+    await this.exerciseService.generateAllEmbeddings();
+    return {
+      message: 'All embeddings have been generated successfully',
+    };
+  }
 }

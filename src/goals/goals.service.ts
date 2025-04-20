@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import {Goals} from 'src/goals/goals.entity'
+import { Repository, Between } from 'typeorm';
+import {Goals} from './goals.entity'
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
+import { History } from '../history/history.entity';
 import { CreateGoalsDTO } from './dto/create-goals.dto';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 @Injectable()
 export class GoalsService {
@@ -11,7 +13,9 @@ export class GoalsService {
         @InjectRepository(Goals)
         private goalsRepository: Repository<Goals>,
         @InjectRepository(User)
-        private userRepository:  Repository<User>
+        private userRepository:  Repository<User>,
+        @InjectRepository(History)
+        private historyRepository: Repository<History>
     ) {}
 
     async create(createGoalsDto: CreateGoalsDTO, userId: number): Promise<Goals> {
@@ -32,6 +36,30 @@ export class GoalsService {
     async findOneByUserId(user_id: number): Promise<any> {
         const goal = await this.goalsRepository.find({where: {user: {id: user_id}}, relations: ['user']});
         return goal;
+    }
+
+    async WeeklyGoalStatus(user_id: number): Promise<any> {
+        const today = new Date();
+
+        // Hitung awal dan akhir minggu ini
+        const start = startOfWeek(today, {weekStartsOn: 1});
+        const end = endOfWeek(today, {weekStartsOn: 1});
+
+        // Ambil semua history dalam minggu ini
+        const histories = await this.historyRepository.find({
+            where: {
+                user: { id: user_id },
+                date: Between(start, end)
+            },
+            relations: ['user'],
+        });
+
+        const message = histories.length >= 3 ? "Kamu telah menyelesaikan olahraga minggu ini!" : "";
+
+        return {
+            olahraga_diselesaikan_dalam_seminggu: histories.length,
+            message
+        };
     }
 
     async update(createGoalsDto: CreateGoalsDTO, goalId: number): Promise<Goals> {

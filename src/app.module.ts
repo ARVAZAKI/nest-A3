@@ -4,11 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { FoodModule } from './food/food.module';
 import { ExerciseModule } from './exercise/exercise.module';
 import { ProgramModule } from './program/program.module';
 import { HistoryModule } from './history/history.module';
 import { GoalsModule } from './goals/goals.module';
+//import { ChatbotModule } from './chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -33,11 +33,11 @@ import { GoalsModule } from './goals/goals.module';
     }),
 
     UserModule,
-    FoodModule,
     ExerciseModule,
     ProgramModule,
     HistoryModule,
     GoalsModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

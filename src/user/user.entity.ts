@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { History } from 'src/history/history.entity';
-import { Goals } from 'src/goals/goals.entity';
+import { History } from '../history/history.entity';
+import { Goals } from '../goals/goals.entity';
 
 @Entity()
 export class User {

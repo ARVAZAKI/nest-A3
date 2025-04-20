@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@huggingface/inference": "^3.8.1",
+    "@langchain/core": "^0.3.45",
     "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.1",
@@ -35,7 +37,9 @@
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
+    "langchain": "^0.3.22",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.14.0",

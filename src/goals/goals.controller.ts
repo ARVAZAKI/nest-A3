@@ -2,7 +2,6 @@ import { Controller, HttpCode, HttpStatus, Post, UseGuards, Body, Req, Get, Put,
 import { GoalsService } from './goals.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateGoalsDTO } from './dto/create-goals.dto';
-import { User } from 'src/user/user.entity';
 
 @Controller('/api/goals')
 export class GoalsController {
@@ -38,6 +37,14 @@ export class GoalsController {
             message: "Goal retrieved successfully",
             data: goal
         }
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('/me-status')
+    async weeklyGoalStatus(@Req() req: any) {
+        const userId = req.user.id || req.user.sub;
+        const status = await this.goalsService.WeeklyGoalStatus(userId);
+        return status;
     }
 
     @UseGuards(AuthGuard('jwt'))

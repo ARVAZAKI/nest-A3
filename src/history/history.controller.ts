@@ -30,9 +30,9 @@ export class HistoryController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('/me')
-    async findOneByUserId(@Req() req: any) {
+    async findByUserId(@Req() req: any) {
         const userId = req.user.id || req.user.sub;
-        const history = await this.historyService.findOneByUserId(userId);
+        const history = await this.historyService.findByUserId(userId);
         return {
             message: "History retrieved successfully",
             data: history

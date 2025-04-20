@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { Program } from 'src/program/program.entity';
-import { History } from 'src/history/history.entity';
+import { User } from '../user/user.entity';
+import { Program } from '../program/program.entity';
+import { History } from './history.entity';
 import { CreateHistoryDTO } from './dto/create-history.dto';
 
 @Injectable()
@@ -34,12 +34,14 @@ export class HistoryService {
     }
 
     async findAll(): Promise<History[]> {
-        return await this.historyRepository.find({
+        const data =  await this.historyRepository.find({
           relations: ['user', 'program'],
         });
+
+        return data;
       }
 
-      async findOneByUserId(user_id: number): Promise<any> {
+      async findByUserId(user_id: number): Promise<any> {
         const history = await this.historyRepository.find({
           where: { user: { id: user_id } },
           relations: ['user', 'program', 'program.exercises'],
@@ -47,25 +49,9 @@ export class HistoryService {
     
         const jumlah_program = history.length;
         const total_kalori = history.reduce((acc, curr) => acc + curr.program.calorie, 0);
-        let total_exercise_duration = 0;
-        
-        const program = history.map(item => {
-          const prog = item.program;
-          const total_duration_exercise = (prog.exercises || [])
-            .reduce((acc, exercise) => acc + (exercise.duration || 0), 0);
-          total_exercise_duration += total_duration_exercise;
-          
-          return {
-            id: prog.id,
-            program_image: prog.program_image,
-            program_name: prog.program_name,
-            program_description: prog.program_description,
-            calorie: prog.calorie,
-            total_duration_exercise
-          };
-        });
+        //let total_exercise_duration = 0;
       
         // Kembalikan data mentah, interceptor akan membungkusnya
-        return { jumlah_program, total_kalori, total_exercise_duration, program };
+        return { jumlah_program, total_kalori, history };
       }                
 }

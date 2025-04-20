@@ -3,13 +3,14 @@ import { GoalsController } from './goals.controller';
 import { GoalsService } from './goals.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Goals } from './goals.entity';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { History } from '../history/history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Goals, User]), ConfigModule.forRoot(), 
+  imports: [TypeOrmModule.forFeature([Goals, User, History]), ConfigModule.forRoot(), 
   PassportModule.register({defaultStrategy: 'jwt'}),
   JwtModule.registerAsync({
     imports: [ConfigModule],

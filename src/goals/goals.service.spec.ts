@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GoalsService } from './goals.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Goals } from './goals.entity';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { CreateGoalsDTO } from './dto/create-goals.dto';
 
