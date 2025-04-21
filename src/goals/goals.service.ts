@@ -54,10 +54,15 @@ export class GoalsService {
             relations: ['user'],
         });
 
-        const message = histories.length >= 3 ? "Kamu telah menyelesaikan olahraga minggu ini!" : "";
+        const goal = await this.goalsRepository.findOne({where: {user: {id: user_id}}, relations: ['user']});
+
+        const weeklyWorkout = goal?.weekly_workout != undefined ? goal?.weekly_workout : 0;
+
+        const message = histories.length >= weeklyWorkout ? "Kamu telah menyelesaikan goals olahraga minggu ini!" : `Kamu telah menyelesaikan ${histories.length} olahraga dalam minggu ini`;
 
         return {
             olahraga_diselesaikan_dalam_seminggu: histories.length,
+            target_olahraga_dalam_seminggu: weeklyWorkout,
             message
         };
     }

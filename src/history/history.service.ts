@@ -28,7 +28,7 @@ export class HistoryService {
             throw new NotFoundException(`Program with ID ${program_id} not found`);
         }
 
-        const history = this.historyRepository.create({user: user, program: program});
+        const history = this.historyRepository.create({user: user, program: program, total_duration: CreateHistoryDto.total_duration});
 
         return await this.historyRepository.save(history);
     }

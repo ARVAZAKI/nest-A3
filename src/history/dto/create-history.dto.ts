@@ -7,9 +7,5 @@ export class CreateHistoryDTO {
 
     @IsNotEmpty()
     @IsInt()
-    total_Duration: number;
-
-    @IsNotEmpty()
-    @IsDate()
-    date: Date;
+    total_duration: number;
 }

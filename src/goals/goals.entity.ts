@@ -6,7 +6,7 @@ export class Goals {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable: false})
     weekly_workout: number;
 
     @ManyToOne(() => User, (user) => user.goals, {onDelete: 'CASCADE'})
