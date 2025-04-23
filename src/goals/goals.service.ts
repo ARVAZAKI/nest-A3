@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import {Goals} from './goals.entity'
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
@@ -46,13 +46,12 @@ export class GoalsService {
         const end = endOfWeek(today, {weekStartsOn: 1});
 
         // Ambil semua history dalam minggu ini
-        const histories = await this.historyRepository.find({
-            where: {
-                user: { id: user_id },
-                date: Between(start, end)
-            },
-            relations: ['user'],
-        });
+        const histories = await this.historyRepository.query(
+            `SELECT DISTINCT ON (DATE(date)) * FROM history
+            WHERE user_id = $1 AND date BETWEEN $2 AND $3
+            ORDER BY DATE(date), date ASC`,
+            [user_id, start, end]
+        )
 
         const goal = await this.goalsRepository.findOne({where: {user: {id: user_id}}, relations: ['user']});
 

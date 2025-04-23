@@ -38,4 +38,15 @@ export class HistoryController {
             data: history
         }
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('/me-today')
+    async findByUserIdByDay(@Req() req: any) {
+        const userId = req.user.id || req.user.sub;
+        const history = await this.historyService.findByUserIdByDay(userId);
+        return {
+            message: "History retrieved successfully",
+            data: history
+        }
+    }
 }
