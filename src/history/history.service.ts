@@ -49,9 +49,9 @@ export class HistoryService {
     
         const jumlah_program = history.length;
         const total_kalori = history.reduce((acc, curr) => acc + curr.program.calorie, 0);
-        //let total_exercise_duration = 0;
-      
+        const sum_of_total_duration = history.reduce((acc, cur) => acc + (cur.total_duration || 0), 0);
+
         // Kembalikan data mentah, interceptor akan membungkusnya
-        return { jumlah_program, total_kalori, history };
+        return { jumlah_program, total_kalori, sum_of_total_duration, history };
       }                
 }
