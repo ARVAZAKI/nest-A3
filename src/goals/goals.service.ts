@@ -40,31 +40,38 @@ export class GoalsService {
 
     async WeeklyGoalStatus(user_id: number): Promise<any> {
         const today = new Date();
-
+    
         // Hitung awal dan akhir minggu ini
-        const start = startOfWeek(today, {weekStartsOn: 1});
-        const end = endOfWeek(today, {weekStartsOn: 1});
-
-        // Ambil semua history dalam minggu ini
+        const start = startOfWeek(today, { weekStartsOn: 1 });
+        const end = endOfWeek(today, { weekStartsOn: 1 });
+    
+        // Ambil semua workout (tanpa DISTINCT, hitung semua sesi)
         const histories = await this.historyRepository.query(
-            `SELECT DISTINCT ON (DATE(date)) * FROM history
-            WHERE user_id = $1 AND date BETWEEN $2 AND $3
-            ORDER BY DATE(date), date ASC`,
+            `SELECT * FROM history
+             WHERE user_id = $1 AND date BETWEEN $2 AND $3
+             ORDER BY date ASC`,
             [user_id, start, end]
-        )
-
-        const goal = await this.goalsRepository.findOne({where: {user: {id: user_id}}, relations: ['user']});
-
-        const weeklyWorkout = goal?.weekly_workout != undefined ? goal?.weekly_workout : 0;
-
-        const message = histories.length >= weeklyWorkout ? "Kamu telah menyelesaikan goals olahraga minggu ini!" : `Kamu telah menyelesaikan ${histories.length} olahraga dalam minggu ini`;
-
+        );
+    
+        // Ambil goal mingguan
+        const goal = await this.goalsRepository.findOne({
+            where: { user: { id: user_id } },
+            relations: ['user']
+        });
+    
+        const weeklyWorkout = goal?.weekly_workout ?? 0;
+    
+        const message = histories.length >= weeklyWorkout
+            ? "Kamu telah menyelesaikan goals olahraga minggu ini!"
+            : `Kamu telah menyelesaikan ${histories.length} workout dalam minggu ini`;
+    
         return {
-            olahraga_diselesaikan_dalam_seminggu: histories.length,
+            total_workout_dalam_seminggu: histories.length,
             target_olahraga_dalam_seminggu: weeklyWorkout,
             message
         };
     }
+    
 
     async update(createGoalsDto: CreateGoalsDTO, goalId: number): Promise<Goals> {
         const goal = await this.goalsRepository.findOne({where: {id: goalId}});

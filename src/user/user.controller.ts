@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, HttpStatus, BadRequestException, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, HttpStatus, BadRequestException, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -88,6 +88,41 @@ export class UserController {
     } catch (error) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         message: error.message || 'Terjadi kesalahan saat mengubah password',
+      });
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('validate-token')
+  async validateToken(@Req() req: any, @Res() res: Response) {
+    try {
+      // Data user dari token tersedia pada req.user (hasil dari validate di JwtStrategy)
+      const userId = req.user.id || req.user.sub;
+      
+      // Cek apakah user masih ada di database
+      try {
+        const user = await this.userService.findOneById(userId);
+        
+        // Jika user ditemukan, token valid
+        return res.status(HttpStatus.OK).json({
+          valid: true,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
+        });
+      } catch (error) {
+        // Jika user tidak ditemukan atau error lainnya
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          valid: false,
+          message: 'User tidak ditemukan atau token tidak valid',
+        });
+      }
+    } catch (error) {
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        valid: false,
+        message: 'Token tidak valid',
       });
     }
   }
