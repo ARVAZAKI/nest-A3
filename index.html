@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Fitness Pemula</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            height: 600px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 10px 0;
+        }
+
+        .user-msg {
+            text-align: right;
+            color: #2c3e50;
+        }
+
+        .bot-msg {
+            text-align: left;
+            color: #34495e;
+        }
+
+        .input-container {
+            margin-top: 20px;
+            display: flex;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* Tambahan styling untuk Markdown */
+        .bot-msg ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        .bot-msg strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Latihan Pemula</h1>
+    <div class="chat-container" id="chatContainer">
+        <div class="message bot-msg">Halo! Saya bisa membantu memberikan rekomendasi latihan untuk pemula.</div>
+    </div>
+    
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="Tanyakan sesuatu...">
+        <button onclick="sendMessage()" id="sendButton">Kirim</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const question = userInput.value.trim();
+            
+            if (!question) return;
+
+            // Tambahkan pesan pengguna ke chat
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-msg';
+            userMsg.textContent = question;
+            document.getElementById('chatContainer').appendChild(userMsg);
+            
+            // Nonaktifkan input dan tombol selama proses
+            userInput.disabled = true;
+            document.getElementById('sendButton').disabled = true;
+
+            try {
+                // Kirim permintaan ke API
+                const response = await fetch('http://localhost:3000/api/chatbot/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question })
+                });
+                
+                const data = await response.json();
+                
+                // Konversi Markdown ke HTML
+                const htmlContent = marked.parse(data.answer);
+                
+                // Tampilkan jawaban bot
+                const botMsg = document.createElement('div');
+                botMsg.className = 'message bot-msg';
+                botMsg.innerHTML = htmlContent;
+                document.getElementById('chatContainer').appendChild(botMsg);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message bot-msg';
+                errorMsg.textContent = 'Maaf, terjadi kesalahan saat memproses permintaan.';
+                document.getElementById('chatContainer').appendChild(errorMsg);
+            } finally {
+                // Aktifkan kembali input dan tombol
+                userInput.value = '';
+                userInput.disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                userInput.focus();
+                
+                // Scroll ke bawah
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        // Event listener untuk tombol enter
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ import { ExerciseModule } from './exercise/exercise.module';
 import { ProgramModule } from './program/program.module';
 import { HistoryModule } from './history/history.module';
 import { GoalsModule } from './goals/goals.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
 //import { ChatbotModule } from './chatbot/chatbot.module';
 
 @Module({
@@ -28,7 +29,7 @@ import { GoalsModule } from './goals/goals.module';
         password: configService.get<string>('DB_PASSWORD'), // Baca dari environment variable
         database: configService.get<string>('DB_DATABASE'), // Baca dari environment variable
         autoLoadEntities: true, // Memuat entitas secara otomatis
-        synchronize: true, // Hanya untuk development
+        synchronize: false, // Hanya untuk development
       }),
     }),
 
@@ -37,6 +38,7 @@ import { GoalsModule } from './goals/goals.module';
     ProgramModule,
     HistoryModule,
     GoalsModule,
+    ChatbotModule
 
   ],
   controllers: [AppController],

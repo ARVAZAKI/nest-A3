@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProgramService } from './program.service';
 import { CreateProgramDTO } from './dto/create-program.dto';
 
@@ -39,4 +39,13 @@ export class ProgramController {
                   message: "Program deleted successfully"
             }
       }
+
+      @Post('/generate-all-embeddings')
+        @HttpCode(HttpStatus.OK)
+        async generateAllEmbeddings() {
+          await this.service.generateAllEmbeddings();
+          return {
+            message: 'All embeddings have been generated successfully',
+          };
+        }
 }
