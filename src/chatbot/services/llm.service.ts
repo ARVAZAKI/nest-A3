@@ -21,7 +21,6 @@ export class LLMService {
         model: modelName,
         contents: [{ role: 'user', parts: [{ text: inputs }] }],
         config: {
-          // Parameter generasi dimasukkan langsung
         maxOutputTokens: 500,
         temperature: 0.7,
         topP: 0.9,

@@ -30,7 +30,6 @@ export class EmbeddingService {
     const modelName = this.config.get<string>('EMBEDDING_MODEL') || 'gemini-embedding-exp-03-07';
 
     try {
-      // Gunakan models.embedContent sesuai dokumentasi
       const response = await this.genAI.models.embedContent({
         model: modelName,
         contents: text,
